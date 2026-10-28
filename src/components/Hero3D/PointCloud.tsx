@@ -1,24 +1,24 @@
 // PointCloud.tsx
-import * as THREE from 'three';
-import { useRef, useMemo, useLayoutEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
-import './PointCloudMaterial';
+import * as THREE from "three";
+import { useRef, useMemo, useLayoutEffect } from "react";
+import { useFrame } from "@react-three/fiber";
+import { PointCloudMaterial } from "./PointCloudMaterial";
 
 const PARTICLE_COUNT = 4000;
 
 // Resolves a Tailwind text-color class to RGB, whatever format the token uses.
 function readTokenColor(textClass: string, target: THREE.Color) {
-  const probe = document.createElement('span');
+  const probe = document.createElement("span");
   probe.className = textClass;
-  probe.style.display = 'none';
+  probe.style.display = "none";
   document.body.appendChild(probe);
   const css = getComputedStyle(probe).color;
   probe.remove();
 
   // A 1x1 canvas converts any CSS color syntax into plain sRGB bytes
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 1;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
   ctx.fillStyle = css;
   ctx.fillRect(0, 0, 1, 1);
   const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
@@ -33,29 +33,43 @@ interface PointCloudProps {
 }
 
 export function PointCloud({ isDark }: PointCloudProps) {
-  const materialRef = useRef<any>(null);
+  type PointCloudMaterialInstance = InstanceType<typeof PointCloudMaterial>;
+
+  const materialRef = useRef<PointCloudMaterialInstance | null>(null);
 
   const positions = useMemo(() => {
-    const pos = new Float32Array(PARTICLE_COUNT * 3);
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      pos[i * 3]     = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-    }
-    return pos;
-  }, []);
+  const pos = new Float32Array(PARTICLE_COUNT * 3);
+  let seed = 123456789;
+
+  const random = (): number => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    pos[i * 3] = (random() - 0.5) * 10;
+    pos[i * 3 + 1] = (random() - 0.5) * 10;
+    pos[i * 3 + 2] = (random() - 0.5) * 10;
+  }
+
+  return pos;
+}, []);
 
   useLayoutEffect(() => {
     const m = materialRef.current;
     if (!m) return;
     // Keep these class names as literal strings so Tailwind doesn't purge them
-    readTokenColor(isDark ? 'text-brand-light' : 'text-brand-accent', m.uniforms.uColor.value);
+    readTokenColor(
+      isDark ? "text-brand-light" : "text-brand-accent",
+      m.uniforms.uColor.value,
+    );
     m.blending = isDark ? THREE.AdditiveBlending : THREE.NormalBlending;
     m.needsUpdate = true;
   }, [isDark]);
 
   useFrame((state) => {
-    if (materialRef.current) materialRef.current.uTime = state.clock.elapsedTime;
+    if (materialRef.current)
+      materialRef.current.uTime = state.clock.elapsedTime;
   });
 
   return (

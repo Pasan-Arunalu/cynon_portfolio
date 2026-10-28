@@ -17,6 +17,7 @@ function useIdleMount() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
     let cancel = () => {};
 

@@ -1,4 +1,4 @@
-import markdown from './SITE_CONTENT.md?raw';
+import markdown from "./SITE_CONTENT.md?raw";
 
 export interface IconContentItem {
   icon: string;
@@ -16,13 +16,13 @@ export interface ContactMethodContent {
 export interface ContactFieldContent {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'textarea';
+  type: "text" | "email" | "textarea";
   autocomplete?: string;
   required: boolean;
   maxLength: number;
   placeholder: string;
   rows?: number;
-  width?: 'half' | 'full';
+  width?: "half" | "full";
 }
 
 export interface SiteContent {
@@ -111,7 +111,7 @@ function readContentDocument(source: string): SiteContent {
 
   if (!match) {
     throw new Error(
-      'SITE_CONTENT.md must contain a fenced ```json ... ``` content block.',
+      "SITE_CONTENT.md must contain a fenced ```json ... ``` content block.",
     );
   }
 
@@ -119,7 +119,11 @@ function readContentDocument(source: string): SiteContent {
     return JSON.parse(match[1]) as SiteContent;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Could not parse the JSON content in SITE_CONTENT.md: ${message}`);
+
+    throw new Error(
+      `Could not parse the JSON content in SITE_CONTENT.md: ${message}`,
+      { cause: error },
+    );
   }
 }
 

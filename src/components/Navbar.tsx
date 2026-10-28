@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-scroll';
-import { Menu, X, Moon, Sun } from 'lucide-react';
-import CynonLogoLightTheme from '../assets/cynon_black_icon.png';
-import CynonLogoDarkTheme from '../assets/cynon_white_icon.png';
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { Link } from "react-scroll";
+import { Menu, X, Moon, Sun } from "lucide-react";
+import CynonLogoLightTheme from "../assets/cynon_black_icon.png";
+import CynonLogoDarkTheme from "../assets/cynon_white_icon.png";
 
 interface NavItem {
   name: string;
@@ -10,28 +10,46 @@ interface NavItem {
 }
 
 const navLinks: NavItem[] = [
-  { name: 'Home', to: 'home' },
-  { name: 'About', to: 'about' },
-  { name: 'Services', to: 'services' },
-  { name: 'Products', to: 'products' },
-  { name: 'Contact', to: 'contact' },
+  { name: "Home", to: "home" },
+  { name: "About", to: "about" },
+  { name: "Services", to: "services" },
+  { name: "Products", to: "products" },
+  { name: "Contact", to: "contact" },
 ];
+
+const subscribeToTheme = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange);
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+
+  return () => observer.disconnect();
+};
+
+const getDarkSnapshot = () =>
+  document.documentElement.classList.contains("dark");
+
+const getServerDarkSnapshot = () => false;
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isDark, setIsDark] = useState<boolean>(false);
+
+  const isDark = useSyncExternalStore(
+    subscribeToTheme,
+    getDarkSnapshot,
+    getServerDarkSnapshot,
+  );
 
   useEffect(() => {
     const root = document.documentElement;
 
-    if (root.classList.contains('dark')) {
-      setIsDark(true);
-      return;
-    }
-
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      root.classList.add('dark');
-      setIsDark(true);
+    if (
+      !root.classList.contains("dark") &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      root.classList.add("dark");
     }
   }, []);
 
@@ -39,11 +57,9 @@ export const Navbar = () => {
     const root = document.documentElement;
 
     if (isDark) {
-      root.classList.remove('dark');
-      setIsDark(false);
+      root.classList.remove("dark");
     } else {
-      root.classList.add('dark');
-      setIsDark(true);
+      root.classList.add("dark");
     }
   };
 
@@ -52,11 +68,10 @@ export const Navbar = () => {
   };
 
   const baseLinkClasses =
-    'font-medium cursor-pointer transition-colors duration-200';
+    "font-medium cursor-pointer transition-colors duration-200";
 
   // Important utilities ensure the active color overrides the default text color.
-  const activeLinkClasses =
-    '!text-brand-accent dark:!text-brand-light';
+  const activeLinkClasses = "!text-brand-accent dark:!text-brand-light";
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-theme-border bg-theme-surface/80 backdrop-blur-md transition-colors duration-300">
@@ -99,7 +114,7 @@ export const Navbar = () => {
               onClick={toggleTheme}
               className="cursor-pointer rounded-full p-2 text-theme-text-primary transition-colors hover:bg-theme-surface-hover"
               aria-label={
-                isDark ? 'Switch to light mode' : 'Switch to dark mode'
+                isDark ? "Switch to light mode" : "Switch to dark mode"
               }
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
@@ -113,7 +128,7 @@ export const Navbar = () => {
               onClick={toggleTheme}
               className="rounded-full p-2 text-theme-text-primary transition-colors hover:bg-theme-surface-hover"
               aria-label={
-                isDark ? 'Switch to light mode' : 'Switch to dark mode'
+                isDark ? "Switch to light mode" : "Switch to dark mode"
               }
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
@@ -123,7 +138,9 @@ export const Navbar = () => {
               type="button"
               onClick={() => setIsOpen((previous) => !previous)}
               className="text-theme-text-primary transition-colors hover:text-brand-accent"
-              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-label={
+                isOpen ? "Close navigation menu" : "Open navigation menu"
+              }
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
             >

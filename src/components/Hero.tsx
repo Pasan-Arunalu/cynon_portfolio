@@ -2,17 +2,11 @@ import { lazy, Suspense } from 'react';
 import { Link } from 'react-scroll';
 import { ArrowRight } from 'lucide-react';
 
-const ParticleBackground = lazy(() =>
-  import('./Hero3D/ParticleBackground').then((m) => ({ default: m.ParticleBackground }))
-);
 const HeroLogoCanvas = lazy(() => import('./Hero3D/HeroLogoCanvas'));
 
 export const Hero = () => {
   return (
     <section id="home" className="h-[calc(100vh-5rem)] mt-20 flex items-center justify-center relative overflow-hidden">
-      <Suspense fallback={null}>
-        <ParticleBackground />
-      </Suspense>
       {/* Background decoration */}
       <div className="absolute align-center w-96 h-96 bg-brand-light/20 rounded-full blur-3xl opacity-50 pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
 
@@ -21,7 +15,7 @@ export const Hero = () => {
           Tech Solutions for <br /> <span className="text-brand-accent dark:text-brand-light"> Innovative Industries</span>
         </h1>
 
-        <div className="flex-1 min-h-[200px] max-h-[400px] w-full max-w-4xl">
+        <div className="flex-1 min-h-50 max-h-100 w-full max-w-4xl">
           <Suspense fallback={null}>
             <HeroLogoCanvas />
           </Suspense>

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
-import { extend } from '@react-three/fiber';
+import { extend, type ThreeElement } from '@react-three/fiber';
 import { vertexShader, fragmentShader } from './shaders';
 
 export const PointCloudMaterial = shaderMaterial(
@@ -9,14 +9,13 @@ export const PointCloudMaterial = shaderMaterial(
     uColor: new THREE.Color('#ffffff'),
   },
   vertexShader,
-  fragmentShader
+  fragmentShader,
 );
 
-// Register with R3F so <pointCloudMaterial /> JSX works
 extend({ PointCloudMaterial });
 
 declare module '@react-three/fiber' {
   interface ThreeElements {
-    pointCloudMaterial: any;
+    pointCloudMaterial: ThreeElement<typeof PointCloudMaterial>;
   }
 }

@@ -1,13 +1,16 @@
-import { memo, useEffect, useSyncExternalStore } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
-import { PointCloud } from './PointCloud';
+import { memo, useEffect, useSyncExternalStore } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import { PointCloud } from "./PointCloud";
 
 const subscribe = (onChange: () => void) => {
   const obs = new MutationObserver(onChange);
-  obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  obs.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
   return () => obs.disconnect();
 };
-const getSnapshot = () => document.documentElement.classList.contains('dark');
+const getSnapshot = () => document.documentElement.classList.contains("dark");
 const getServerSnapshot = () => false;
 
 // Drives rendering manually so the scene runs at a fixed, lower frame rate.
@@ -16,7 +19,7 @@ function FrameLimiter({ fps = 30 }: { fps?: number }) {
   const set = useThree((s) => s.set);
 
   useEffect(() => {
-    set({ frameloop: 'never' });
+    set({ frameloop: "never" });
     let raf = 0;
     let last = 0;
     const loop = (t: number) => {
@@ -34,7 +37,11 @@ function FrameLimiter({ fps = 30 }: { fps?: number }) {
 }
 
 export const ParticleBackground = memo(() => {
-  const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const isDark = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   return (
     <div
@@ -46,6 +53,7 @@ export const ParticleBackground = memo(() => {
         gl={{ antialias: false }}
         camera={{ position: [0, 0, 5], fov: 45 }}
       >
+        <FrameLimiter fps={30} />
         <PointCloud isDark={isDark} />
       </Canvas>
     </div>
