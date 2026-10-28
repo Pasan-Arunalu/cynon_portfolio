@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/700.css";
+
+@theme {
+  --font-sans: "Space Grotesk", sans-serif;
+
+  /* Primary Brand */
+  --color-brand-accent: #252769;
+  --color-brand-hover: #30338A;
+  --color-brand-light: #4A4EC4;
+
+  /* Silvers */
+  --color-silver-light: #E9EAEE;
+  --color-silver-base: #C7CBD4;
+  --color-silver-premium: #E4E4E7;
+  --color-silver-dark: #7C8392;
+
+  /* Grays */
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F4F4F5;
+  --color-gray-200: #E4E4E7;
+  --color-gray-300: #D4D4D8;
+  --color-gray-400: #A1A1AA;
+  --color-gray-500: #71717A;
+  --color-gray-600: #52525B;
+  --color-gray-700: #3F3F46;
+  --color-gray-800: #27272A;
+  --color-gray-900: #18181B;
+
+  /* Theme color mappings (Utility classes will be bg-theme-bg-primary etc.) */
+  --color-theme-bg-primary: var(--theme-bg-primary);
+  --color-theme-bg-secondary: var(--theme-bg-secondary);
+  --color-theme-bg-tertiary: var(--theme-bg-tertiary);
+  --color-theme-surface: var(--theme-surface);
+  --color-theme-surface-hover: var(--theme-surface-hover);
+  --color-theme-border: var(--theme-border);
+  --color-theme-border-soft: var(--theme-border-soft);
+  --color-theme-text-primary: var(--theme-text-primary);
+  --color-theme-text-secondary: var(--theme-text-secondary);
+  --color-theme-text-muted: var(--theme-text-muted);
+  --color-theme-text-disabled: var(--theme-text-disabled);
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    /* Light Theme Defaults */
+    --theme-bg-primary: #FFFFFF;
+    --theme-bg-secondary: #FAFAFA;
+    --theme-bg-tertiary: #B9D4FF;
+    --theme-surface: #FFFFFF;
+    --theme-surface-hover: #F7F7F8;
+    --theme-border: #E6E6E8;
+    --theme-border-soft: #F0F0F1;
+    --theme-text-primary: #09090B;
+    --theme-text-secondary: #52525B;
+    --theme-text-muted: #71717A;
+    --theme-text-disabled: #A1A1AA;
+  }
+
+  .dark {
+    /* Dark Theme Overrides */
+    --theme-bg-primary: #09090B;
+    --theme-bg-secondary: #111113;
+    --theme-bg-tertiary: #18181B;
+    --theme-surface: #111113;
+    --theme-surface-hover: #1C1C21;
+    --theme-border: #27272A;
+    --theme-border-soft: #1A1A1E;
+    --theme-text-primary: #FAFAFA;
+    --theme-text-secondary: #52525B;
+    --theme-text-muted: #A1A1AA;
+    --theme-text-disabled: #71717A;
+  }
+
+  body {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+
+.bridge__leaf {
+  display: inline-block;      /* transforms don't apply to inline elements */
+  opacity: 0;
+  will-change: transform;
+}
+.bridge__leaf--left  { transform-origin: 0% 100%;   transform: rotate(-85deg); }
+.bridge__leaf--right { transform-origin: 100% 100%; transform: rotate(85deg); }
+
+.bridge--down .bridge__leaf--left  { animation: bridge-lower-left 1s forwards; }
+.bridge--down .bridge__leaf--right { animation: bridge-lower-right 1s forwards; }
+
+/* Gravity-style drop, then a small settle when the leaves meet */
+@keyframes bridge-lower-left {
+  0%   { opacity: 0; transform: rotate(-85deg); animation-timing-function: ease-in; }
+  10%  { opacity: 1; }
+  70%  { transform: rotate(0deg);  animation-timing-function: ease-out; }
+  85%  { transform: rotate(-4deg); animation-timing-function: ease-in-out; }
+  100% { opacity: 1; transform: rotate(0deg); }
+}
+@keyframes bridge-lower-right {
+  0%   { opacity: 0; transform: rotate(85deg); animation-timing-function: ease-in; }
+  10%  { opacity: 1; }
+  70%  { transform: rotate(0deg);  animation-timing-function: ease-out; }
+  85%  { transform: rotate(4deg);  animation-timing-function: ease-in-out; }
+  100% { opacity: 1; transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge__leaf { opacity: 1; transform: none; }
+  .bridge--down .bridge__leaf { animation: none; }
+}
