@@ -143,6 +143,11 @@ This file is the central content inventory for the CynonTech website. Keep user-
         "label": "Call us",
         "value": "+94 76 880 9340",
         "href": "tel:+94768809340"
+      },
+      {
+        "icon": "MapPin",
+        "label": "Locate Us",
+        "value": "Colombo, Sri Lanka"
       }
     ],
     "form": {
